@@ -1,3 +1,5 @@
+An Lattice Gas Automata based weather simulator.
+
 To build this project you will need maven.
 
 https://maven.apache.org/download.cgi
@@ -14,7 +16,7 @@ runLab.sh
 
 to run the code, or type the following:
 java -cp target/lattice-1.0-SNAPSHOT.jar au.com.jc.weather.user.DataFeedRunner
-java -cp target/lattice-1.0-SNAPSHOT.jar au.com.jc.weather.user.QueryRunner $@
+java -cp target/lattice-1.0-SNAPSHOT.jar au.com.jc.weather.user.QueryRunner <your args here>
 java -cp target/lattice-1.0-SNAPSHOT.jar au.com.jc.weather.lab.LatticeLab
 
-Queryrunner takes some args, but it will let you know.
+Queryrunner takes some args, but it will let you know the format when you first run it.
