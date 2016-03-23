@@ -1,6 +1,10 @@
 To build this project you will need maven.
 
-cd to core directory and do
+https://maven.apache.org/download.cgi
+https://maven.apache.org/install.html
+
+cd to core directory (this one) and do
+
 mvn install
 
 Then you can either use the three scripts
