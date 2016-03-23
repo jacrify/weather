@@ -3,6 +3,7 @@ package au.com.jc.weather.model;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 /**
  * This class holds all the tweakable parameters of the model.
@@ -27,14 +28,19 @@ public class ModelParameters {
     //in one direction. Array indexes are the directions (see Point)
     private double[] directionBias=new double[] {0.0,0.04,0.08,0.04,0.0,0.0};
     //air density at start
-    private double density=0.02;
+    private double density=0.01;
     //steps to run
-    private int steps=400;
+    private int steps=200;
+
+
+    //use same RNR for all runs to ensure consistency.
+    private Random rand;
 
     public ModelParameters() {
         super();
         try {
             startTime = timeFormatter.parse(startTimeString);
+            rand=new Random(startTime.getTime());
         } catch (ParseException e) {
             throw new IllegalArgumentException("Wrong start date for model",e);
         }
@@ -118,6 +124,14 @@ public class ModelParameters {
 
     public void setSteps(int steps) {
         this.steps = steps;
+    }
+
+    public Random getRand() {
+        return rand;
+    }
+
+    public void setRand(Random rand) {
+        this.rand = rand;
     }
 }
 

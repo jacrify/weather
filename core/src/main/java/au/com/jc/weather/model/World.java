@@ -5,7 +5,10 @@ import au.com.jc.weather.lga.Mass;
 import au.com.jc.weather.lga.Point;
 import au.com.jc.weather.lga.Sample;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  * Created by john on 21/03/16.
@@ -19,9 +22,6 @@ public class World {
 
     private Elevation elevation;
 
-    //TODO move to central model
-
-    private Random rand;
     private Lattice lattice;
 
     private int stepCount=0;
@@ -33,7 +33,7 @@ public class World {
         this.parameters=parameters;
 
         int seed=(int)System.currentTimeMillis();
-        rand=new Random(seed);
+
 
         lattice=new Lattice(width,height);
         seedLattice(parameters.getDensity());
@@ -56,13 +56,14 @@ public class World {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 Point p=new Point(x,y);
+                p.setRand(parameters.getRand());
                 for (int k = 0; k < 6; k++) {
 
                     double equatorialAdjustment= Util.triangle(y, height, 2, 0, -0.5);
 
                     double adjustedDensity=density+(equatorialAdjustment*parameters.getDirectionBias()[k]);
 
-                    if (rand.nextDouble() <= (adjustedDensity)) {
+                    if (parameters.getRand().nextDouble() <= (adjustedDensity)) {
                         Mass m=new Mass();
                         p.addMass(m,k);
 

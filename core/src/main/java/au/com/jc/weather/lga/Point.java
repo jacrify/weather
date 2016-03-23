@@ -40,7 +40,11 @@ public class Point {
     private static final int[] result1 = new int[64];
     private static final int[] result2 = new int[64];
 
-    private static final Random rand = new Random();
+    public void setRand(Random rand) {
+        this.rand = rand;
+    }
+
+    private Random rand = new Random();
 
     static {
 
@@ -108,6 +112,7 @@ public class Point {
      */
     public Point flight(Point[] neighbours) {
         Point p = new Point(x,y);
+        p.setRand(rand);
 
         for (int mass = 0; mass < 6; mass++) {
             //j is opposite direction to i
@@ -174,8 +179,10 @@ public class Point {
 
     public Point scatter() {
         Point p = new Point(x,y);
+        //TODO create a Point(Point p) constructor
         p.massCount=massCount;
         p.massesPopulated=massesPopulated;
+        p.setRand(rand);
 
         int r1 = result1[mask];
         if (r1 == mask) {
