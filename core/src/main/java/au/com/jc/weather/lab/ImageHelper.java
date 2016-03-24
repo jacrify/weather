@@ -11,7 +11,19 @@ import java.io.IOException;
  */
 public class ImageHelper {
 
-        public void generateBitmap(int[][] bytes,String filename) throws IOException {
+    private int width;
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    private int height;
+
+    public void generateBitmap(int[][] bytes,String filename) throws IOException {
             int width=bytes[0].length;
             int height=bytes.length;
             BufferedImage im = new BufferedImage(width,height,BufferedImage.TYPE_BYTE_BINARY);
@@ -65,13 +77,16 @@ public class ImageHelper {
     }
 
     public void generateColourBitmap(double[][] bytes,String filename, double low, double high) throws IOException {
-        int width=bytes[0].length;
-        int height=bytes.length;
+        int height=bytes[0].length;
+        int width=bytes.length;
+//        System.out.println(""+height);
         BufferedImage im = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
         WritableRaster raster = im.getRaster();
         int[] black=new int[]{0,0,0,0};
         for (int x = 0; x < width; x++) {
+
             for (int y = 0; y < height; y++) {
+
                 double t=bytes[x][y];
                 if (t==0)
                     raster.setPixel(x,y,black);
@@ -79,7 +94,8 @@ public class ImageHelper {
                 raster.setPixel(x,y, rgb(low,high, t));
             }
         }
-
+        this.width=width;
+        this.height=height;
         ImageIO.write(im, "BMP", new File(filename));
     }
 }

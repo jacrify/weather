@@ -170,4 +170,26 @@ public class WorldTest {
         assertEquals(0, g.convertLatticexToGridx(2, 2), 0.01);
 
     }
+    @Test
+    public void testConvertGridxToLatticex() throws Exception {
+        ModelParameters p = new ModelParameters();
+        p.setLatticeWidth(3);
+        p.setLatticeHeight(3);
+
+        p.setDensity(0);
+        World g = new World(p);
+        assertEquals(0, g.convertGridxToLatticex(0, 0), 0.01);
+        assertEquals(2.5, g.convertGridxToLatticex(0, 1), 0.01);
+        assertEquals(2, g.convertGridxToLatticex(0, 2), 0.01);
+
+        assertEquals(1, g.convertGridxToLatticex(2, 2), 0.01);
+
+        p.setLatticeWidth(150);
+        p.setLatticeHeight(150);
+        g = new World(p);
+        assertEquals(0, g.convertGridxToLatticex(0.4166666666666572, 0.8333333333333334), 0.01);
+
+
+    }
+
 }

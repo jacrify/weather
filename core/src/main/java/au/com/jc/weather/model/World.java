@@ -11,6 +11,16 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 /**
+ * Model of the world.
+ * Holds an LGA (see lga package) to model air.
+ * Key responsiblilities of this class are:
+ * -Seeding the LGA
+ * -Applying temperature changes due to earth rotation/latitude
+ * -Providing transformations between three different coordinate systems:
+ *   a) latitude longitude (currently using an equirectangular projection
+ *   b) an x y cartesian grid of the same size as the underlying LGA
+ *   c) the LGA coordinate system, where (0,0) is at the same point as the grid (0,0)
+ *      but (0,maxy) is at grid (0+y/2,y) due to the skew of the LGA triangular grid.
  * Created by john on 21/03/16.
  */
 public class World {
@@ -83,7 +93,9 @@ public class World {
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                double delta = calculateTemperatureDelta(x, y, hourOfDayAtGMT);
+
+                int gridx= (int) convertLatticexToGridx(x,y);
+                double delta = calculateTemperatureDelta(gridx, y, hourOfDayAtGMT);
 
                 lattice.adjustTemp(x,y,delta);
             }
@@ -142,8 +154,7 @@ public class World {
         return Util.interpolate(0,height,-90,90,lat);
     }
 
-    //TODO fix this:(0,height) lattice coord should not map to (0,maxLongitude) but (2x,maxLongitude)
-    //Be careful though- there isn't only used by lattice projection, but by elevation also.
+
     protected double convertLongitudeToGridX(double longi) {
         return Util.interpolate(0, width, -180, 180, longi + 180) % width;
     }
@@ -159,14 +170,26 @@ public class World {
     }
 
     protected double  convertGridxToLatticex (double gridx,double gridy) {
-        return gridx - (gridy/2.0) ;
+        double x= (gridx - (gridy/2.0)) ;
+        if (x<0)
+            x=width+x;
+
+        if (x>=width)
+            return 0;
+        return x;
     }
 
-    //Work out the number of degrees increase/decrease due to sunlight or lack or it,
-    //per hour
-    //We need a band at 45N and 45S where net is 0,
-    //otherwise system will gain or lose energy
+
+    /**
+     * Work out the number of degrees increase/decrease due to sunlight or lack or it, per hour.
+     * We need a band at 45N and 45S where net is 0,otherwise system will gain or lose energy
+     * @param x a grid x coord
+     * @param y a grid y coord
+     * @param gmtHour
+     * @return
+     */
     public double calculateTemperatureDelta(int x, int y, int gmtHour) {
+
         double localHour= calculateLocalHour(x, gmtHour);
         double timeOfDayModifier= calculateTimeOfDayTempModifier(localHour);
 
@@ -222,12 +245,36 @@ public class World {
     }
 
     public int getElevation(double lat, double longi) {
+
         int sourceY = (int) Util.interpolate( 0, elevation.getElevationHeight(),90, -90,lat);
 
         //Greenwich is a x 0 on our map, so shift longitude back 180
-        int sourceX = (int) Util.interpolate(0, elevation.getElevationWidth(),-180,180, longi-180);
+        int sourceX = (int) Util.interpolate(0, elevation.getElevationWidth(),-180,180, longi+180) %elevation.getElevationWidth();
         return elevation.getElevation(sourceX,sourceY);
 
         }
 
+    /**
+     * Debug method for generate images.
+     * @return
+     */
+    public double[][] generateTemperatureMap() {
+        double[][] grid =  new double[360][180];
+        for (int longi = -180; longi < 180; longi++) {
+            for (int lat = -90; lat < 90; lat++) {
+//                System.out.println("longi:"+longi+"Lat:"+lat);
+                double gridx=convertLongitudeToGridX(longi);
+                double gridy=convertLatitudeToGridY(lat);
+//                System.out.println("Gridx:"+gridx+" Grid y:"+gridy);
+                int latticeX= (int) convertGridxToLatticex(gridx,gridy);
+//                System.out.println("LatticeX:"+latticeX);
+                int latticeY= (int) gridy;
+                double t=lattice.sample(latticeX, latticeY, 2).getAverageTemp();
+
+                grid[longi+180][lat+90]=t;
+
+            }
+        }
+        return grid;
+    }
 }

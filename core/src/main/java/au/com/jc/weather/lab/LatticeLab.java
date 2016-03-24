@@ -1,4 +1,6 @@
-package au.com.jc.weather.lab;
+package au.com.jc.weather.lab;/*
+ * 1.1 Swing version.
+ */
 
 import au.com.jc.weather.model.ModelParameters;
 import au.com.jc.weather.model.World;
@@ -102,30 +104,31 @@ public class LatticeLab extends JApplet
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println("Running world, please be patient...");
 //        java.util.List<String> files=new ArrayList<String>();
         String tmpDir=System.getProperty("java.io.tmpdir");
-        String filestart=tmpDir+File.pathSeparator+"lattice";
+        String filestart="/Users/john/images/lattice";
         String fileend=".bmp";
 
         ModelParameters p=new ModelParameters();
 
+
         ImageHelper ih=new ImageHelper();
 
-        int steps=400;
+        int steps=100;
         World world=new World(p);
         //au.com.jc.weather.lga.Lattice l=new au.com.jc.weather.lga.Lattice(w,h,density);
         for (int i = 0; i < steps; i++) {
             String filename=filestart+i+fileend;
 
 
-            ih.generateColourBitmap(world.getLattice().generateTemperatureMap(),filename,-10,50);
+            ih.generateColourBitmap(world.generateTemperatureMap(),filename,-10,50);
 //            ih.generateColourBitmap(world.getLattice().generateDenMap(),filename,0.0,1.0);
 
 
 //            ih.generateColourBitmap(world.lattice.generateParticleMap(),filename);
 //            ih.generateColourBitmap(world.lattice.generateParticleMap(),filename);
 //            l.generateBitmap(filename);
+            System.out.println("Running simulation step "+i+" of "+steps);
             world.step();
         }
 
@@ -139,7 +142,7 @@ public class LatticeLab extends JApplet
                         ImageIO.read(new File(filestart + i + fileend));
         }
 
-        JFrame f = new JFrame("Temperature");
+        JFrame f = new JFrame("Temp");
         f.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
@@ -149,7 +152,7 @@ public class LatticeLab extends JApplet
         LatticeLab controller = new LatticeLab();
         controller.buildUI(f.getContentPane(), images);
         controller.startAnimation();
-        f.setSize(new Dimension(p.getLatticeWidth(), p.getLatticeHeight()+22));
+        f.setSize(ih.getWidth(),ih.getHeight()+22);
         f.setVisible(true);
     }
 }
