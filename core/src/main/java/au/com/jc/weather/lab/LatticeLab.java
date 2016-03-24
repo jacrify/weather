@@ -106,7 +106,8 @@ public class LatticeLab extends JApplet
     public static void main(String[] args) throws IOException {
 //        java.util.List<String> files=new ArrayList<String>();
         String tmpDir=System.getProperty("java.io.tmpdir");
-        String filestart="/Users/john/images/lattice";
+//        String filestart="/Users/john/images/lattice";
+        String filestart=tmpDir+"lattice";
         String fileend=".bmp";
 
         ModelParameters p=new ModelParameters();
