@@ -72,7 +72,6 @@ public class World {
                 lattice.setPoint(p);
             }
         }
-
     }
 
     /**
@@ -113,28 +112,54 @@ public class World {
      * @return
      */
     public Sample getSample(double lat, double longi) {
-        int x = covertLat(lat);
-        int y = convertLong(longi);
+        double gridy=convertLatitudeToGridY(lat);
+        double gridx=convertLongitudeToGridX(longi);
+
+        int latticeX= (int) convertGridxToLatticex(gridx,gridy);
+        int latticeY=(int)gridy;
 
         //TODO interpolate
-        Sample s=lattice.sample(x, y, parameters.getSamplesize());
+        Sample s=lattice.sample(latticeX, latticeY, parameters.getSamplesize());
 
         return s;
     }
 
+    /**
+     * Convert a lat long to a floating point lattice coords.
+     * Lattice lines are offset (skewed) to this is tricky.
+     * @param lat
+     * @param longi
+     * @return array[2] of doubles, {x,y}
+     */
+    private double[] convertLatLongToLatticeCoords(double lat, double longi) {
+        double gridX=convertLongitudeToGridX(longi);
+        double gridY=convertLatitudeToGridY(lat);
 
-    private int covertLat(double lat) {
-        return height-(int)(height* ((lat+90)/180.0));
+       return null;
+    }
+
+    protected double convertLatitudeToGridY(double lat) {
+        return Util.interpolate(0,height,-90,90,lat);
     }
 
     //TODO fix this:(0,height) lattice coord should not map to (0,maxLongitude) but (2x,maxLongitude)
     //Be careful though- there isn't only used by lattice projection, but by elevation also.
-    private int convertLong(double longi) {
-        if (longi>=0.0){
-            return (int) (width * (longi/360));
-        }
-        return (int) (width/2+(width*(180.0-longi)/360.0));
+    protected double convertLongitudeToGridX(double longi) {
+        return Util.interpolate(0, width, -180, 180, longi + 180) % width;
+    }
 
+    /**
+     * Convert lattice coords (sked) into rectangular grid coords
+     * @param latticex
+     * @param latticey
+     * @return x grid coord
+     */
+    protected double convertLatticexToGridx(double latticex, double latticey) {
+        return (latticex+(latticey/2.0)) %width;
+    }
+
+    protected double  convertGridxToLatticex (double gridx,double gridy) {
+        return gridx - (gridy/2.0) ;
     }
 
     //Work out the number of degrees increase/decrease due to sunlight or lack or it,

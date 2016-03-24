@@ -132,4 +132,42 @@ public class WorldTest {
 
 
     }
+
+    @Test
+    public void testConvertLongitudeToGridX() throws Exception {
+
+        ModelParameters p = new ModelParameters();
+        p.setLatticeWidth(360);
+        p.setLatticeHeight(180);
+        p.setTime_temp_delta(0.1);
+        p.setDensity(0);
+        World g = new World(p);
+        assertEquals(0, g.convertLatitudeToGridY(-90), 0.01);
+        assertEquals(180, g.convertLatitudeToGridY(90), 0.01);
+        assertEquals(90, g.convertLatitudeToGridY(0), 0.01);
+
+        assertEquals(0, g.convertLongitudeToGridX(0), 0.01);
+        assertEquals(180, g.convertLongitudeToGridX(180), 0.01);
+        assertEquals(180, g.convertLongitudeToGridX(-180), 0.01);
+    }
+
+    @Test
+    public void testConvertLatticexToGridx() throws Exception {
+
+        ModelParameters p = new ModelParameters();
+        p.setLatticeWidth(3);
+        p.setLatticeHeight(3);
+
+        p.setDensity(0);
+        World g = new World(p);
+        assertEquals(0, g.convertLatticexToGridx(0, 0), 0.01);
+        assertEquals(0.5, g.convertLatticexToGridx(0, 1), 0.01);
+        assertEquals(1, g.convertLatticexToGridx(0, 2), 0.01);
+
+
+        assertEquals(2, g.convertLatticexToGridx(2, 0), 0.01);
+        assertEquals(2.5, g.convertLatticexToGridx(2, 1), 0.01);
+        assertEquals(0, g.convertLatticexToGridx(2, 2), 0.01);
+
+    }
 }
