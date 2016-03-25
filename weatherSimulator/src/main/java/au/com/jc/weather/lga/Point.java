@@ -75,7 +75,7 @@ public class Point {
         result1[W + E + NW + SE] = NW + NE + SE + SW;
         result2[W + E + NW + SE] = W + E + SE + SW;
 
-        //three body collisions: change to alernate direction. No randomness, so result1
+        //three body collisions: change to alternate direction. No randomness, so result1
         //array is set only. Result1 being -1 indicates that no random choice is needed.
 
         result1[NE + SE + W] = NW + E + SW;
@@ -103,12 +103,13 @@ public class Point {
 
     /**
      * Examine neighbours. If neighbours have a mass
-     * that is heading this way, move it to this getPoint
+     * that is heading this way, move it to this point.
      * Order of neighbours array is expected to be
      * nw, ne, e, se, sw, w
-     * If a neighbour is null, it indicates a wall. Masses should bounce off walls.
+     * If a neighbour is null, it indicates a wall (eg north/south of map).
+     * Masses should bounce off walls.
      * @param neighbours
-     * @return
+     * @return a replacement point
      */
     public Point flight(Point[] neighbours) {
         Point p = new Point(x,y);

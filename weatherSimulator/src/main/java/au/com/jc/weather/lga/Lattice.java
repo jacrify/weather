@@ -58,12 +58,12 @@ public class Lattice {
     }
 
     /**
-     * Lattice is responsbile for calculating neighbours,
+     * Lattice is responsible for calculating neighbours,
      * allowing us to manage the topology.
      * We wrap east and west, and bounce particles off the pole.
      * @param x
      * @param y
-     * @return
+     * @return an array of neighbours in order nw,ne,e,se,sw. Null means edge-particles should bounce
      */
     protected Point[] getNeighbours(int x, int y) {
         int left = (x == 0 ? width - 1 : x - 1);
@@ -80,63 +80,6 @@ public class Lattice {
         Point w = lattice[left][y];
 
         return new Point[]{nw, ne, e, se, sw, w};
-    }
-
-
-    //TODO replace following with Visitor to remove repeated code
-    /**
-     * Debug method for visualising particle map
-     * @return
-     */
-    public double[][] generateParticleMap() {
-        double[][] grid =  new double[width][height];
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                if (lattice[x][y].getMask() > 0) {
-                    grid[x][y]=1;
-                }
-                else {
-                    grid[x][y]=0;
-                }
-            }
-        }
-        return grid;
-    }
-
-
-
-    /**
-     * Debug method for visualising temperature map
-     * @return
-     */
-    public double[][] generateTemperatureMap() {
-        double[][] grid =  new double[width][height];
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                double t=sample(x,y,2).getAverageTemp();
-
-                grid[x][y]=t;
-
-            }
-        }
-        return grid;
-    }
-
-    /**
-     * Debug method for visualising density map
-     * @return
-     */
-    public double[][] generateDenMap() {
-        double[][] grid =  new double[width][height];
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                double t=sample(x,y,2).getDensity();
-
-                grid[x][y]=t;
-
-            }
-        }
-        return grid;
     }
 
     /**
