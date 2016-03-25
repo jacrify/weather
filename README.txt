@@ -1,4 +1,4 @@
-An Lattice Gas Automata based weather simulator.
+A Lattice Gas Automata based weather simulator.
 
 To build this project you will need maven, and java 8.
 
