@@ -22,4 +22,10 @@ public class UtilTest {
         assertEquals(10,Util.interpolate(0,10,0,100,100),0.01);
 
     }
+    @Test
+    public void testDistance() throws Exception {
+        assertEquals(5, Util.distance(0, 0, 3, 4), 0.01);
+    }
+
+
 }

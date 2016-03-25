@@ -13,6 +13,8 @@ import java.io.IOException;
 public class Elevation {
     //TODO move to central model?
     private static final int HEIGHT_OF_EVEREST = 8848;
+//    private static final String ELEVATION_IMAGE = "gebco_08_rev_elev_21600x10800.png";
+
     private static final String ELEVATION_IMAGE = "gebco_08_rev_elev_small.png";
 
     private int[][] elevation;
@@ -54,8 +56,13 @@ public class Elevation {
                 //heightVal is between 0 and 255
                 int heightVal = image.getRaster().getSample(x, y, 0);
 
-                int heightInMeters = (int) Util.interpolate(0, HEIGHT_OF_EVEREST, 0, 255, heightVal);
-                elevation[x][y] = heightInMeters;
+                if (heightVal==0) {
+                    elevation[x][y] = 0;
+                }else {
+
+                    int heightInMeters = (int) Math.ceil(Util.interpolate(1, HEIGHT_OF_EVEREST, 0, 255, heightVal));
+                    elevation[x][y] = heightInMeters;
+                }
             }
         }
 

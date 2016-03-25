@@ -2,6 +2,7 @@ package au.com.jc.weather.lab;/*
  * 1.1 Swing version.
  */
 
+import au.com.jc.weather.model.Elevation;
 import au.com.jc.weather.model.ModelParameters;
 import au.com.jc.weather.model.World;
 
@@ -117,6 +118,8 @@ public class LatticeLab extends JApplet
 
         int steps=100;
         World world=new World(p);
+        Elevation e=new Elevation();
+        world.setElevation(e);
         //au.com.jc.weather.lga.Lattice l=new au.com.jc.weather.lga.Lattice(w,h,density);
         for (int i = 0; i < steps; i++) {
             String filename=filestart+i+fileend;

@@ -142,8 +142,8 @@ public class WorldTest {
         p.setTime_temp_delta(0.1);
         p.setDensity(0);
         World g = new World(p);
-        assertEquals(0, g.convertLatitudeToGridY(-90), 0.01);
-        assertEquals(180, g.convertLatitudeToGridY(90), 0.01);
+        assertEquals(180, g.convertLatitudeToGridY(-90), 0.01);
+        assertEquals(0, g.convertLatitudeToGridY(90), 0.01);
         assertEquals(90, g.convertLatitudeToGridY(0), 0.01);
 
         assertEquals(0, g.convertLongitudeToGridX(0), 0.01);
@@ -169,6 +169,14 @@ public class WorldTest {
         assertEquals(2.5, g.convertLatticexToGridx(2, 1), 0.01);
         assertEquals(0, g.convertLatticexToGridx(2, 2), 0.01);
 
+
+        //Check that these two functions are inverse of each other
+        assertEquals(1,g.convertLatticexToGridx(g.convertGridxToLatticex(1.0,1.0),1.0),0.01);
+        assertEquals(1,g.convertGridxToLatticex(g.convertLatticexToGridx(1.0,1.0),1.0),0.01);
+
+        assertEquals(1,g.convertLatticexToGridx(g.convertGridxToLatticex(1.0,2.0),2.0),0.01);
+        assertEquals(1,g.convertGridxToLatticex(g.convertLatticexToGridx(1.0,2.0),2.0),0.01);
+
     }
     @Test
     public void testConvertGridxToLatticex() throws Exception {
@@ -188,6 +196,36 @@ public class WorldTest {
         p.setLatticeHeight(150);
         g = new World(p);
         assertEquals(0, g.convertGridxToLatticex(0.4166666666666572, 0.8333333333333334), 0.01);
+
+
+    }
+    @Test
+    public void testGetNearestNeighourLatticeCoordsAndDists() throws Exception {
+        ModelParameters p = new ModelParameters();
+        p.setLatticeWidth(3);
+        p.setLatticeHeight(3);
+
+        p.setDensity(0);
+        World g = new World(p);
+        double[][] n = g.getNearestNeighourLatticeCoordsAndDists(0.4, 0.3);
+
+
+        //first point should be up and left, so 0,0
+        assertEquals(0,n[0][0], 0.01);
+        assertEquals(0,n[0][1], 0.01);
+
+        //and distance should be 0.5
+        assertEquals(0.5,n[0][2], 0.01);
+
+        //Second point should be up and right, so 1,0
+        assertEquals(1,n[1][0], 0.01);
+        assertEquals(0,n[1][1], 0.01);
+
+
+
+        //Third point should be down and left, so 0,1
+        assertEquals(0,n[2][0], 0.01);
+        assertEquals(1,n[2][1], 0.01);
 
 
     }

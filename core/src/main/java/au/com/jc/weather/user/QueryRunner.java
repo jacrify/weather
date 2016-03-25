@@ -1,5 +1,6 @@
 package au.com.jc.weather.user;
 
+import au.com.jc.weather.model.Elevation;
 import au.com.jc.weather.model.ModelParameters;
 import au.com.jc.weather.model.Util;
 import au.com.jc.weather.model.World;
@@ -50,6 +51,8 @@ public class QueryRunner {
     protected String run() throws IllegalArgumentException {
         ModelParameters p=new ModelParameters();
         World world=new World(p);
+        Elevation e=new Elevation();
+        world.setElevation(e);
 
         if (world.getCurrentTime().getTime() >= targetTime.getTime()) {
             throw new IllegalArgumentException("Passed time "+timeFormatter.format(targetTime)+ " must be greater than simulation start time "+timeFormatter.format(world.getCurrentTime()));

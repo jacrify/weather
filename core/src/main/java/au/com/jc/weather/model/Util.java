@@ -39,4 +39,16 @@ public class Util {
         double ratio=(actualSourceValue - lowerSourceRange)/(upperSouceRange - lowerSourceRange);
         return ((upperTargetRange - lowerTargetRange)*ratio)+ lowerTargetRange;
     }
+
+    /**
+     * Calcualte distance between two points
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @return distance
+     */
+    public static double distance(double x1,double y1,double x2,double y2) {
+        return Math.abs(Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)));
+    }
 }

@@ -1,14 +1,8 @@
 package au.com.jc.weather.model;
 
-import au.com.jc.weather.lga.Lattice;
-import au.com.jc.weather.lga.Mass;
-import au.com.jc.weather.lga.Point;
-import au.com.jc.weather.lga.Sample;
+import au.com.jc.weather.lga.*;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * Model of the world.
@@ -30,6 +24,14 @@ public class World {
     private final ModelParameters parameters;
     private int hourOfDayAtGMT=0;
 
+    public Elevation getElevation() {
+        return elevation;
+    }
+
+    public void setElevation(Elevation elevation) {
+        this.elevation = elevation;
+    }
+
     private Elevation elevation;
 
     private Lattice lattice;
@@ -44,11 +46,8 @@ public class World {
 
         int seed=(int)System.currentTimeMillis();
 
-
         lattice=new Lattice(width,height);
         seedLattice(parameters.getDensity());
-
-        elevation=new Elevation();
     }
 
     public Lattice getLattice() {
@@ -118,7 +117,7 @@ public class World {
     }
 
     /**
-     * Sample conditions at one point
+     * PointSample conditions at one point
      * @param lat
      * @param longi
      * @return
@@ -127,13 +126,20 @@ public class World {
         double gridy=convertLatitudeToGridY(lat);
         double gridx=convertLongitudeToGridX(longi);
 
-        int latticeX= (int) convertGridxToLatticex(gridx,gridy);
-        int latticeY=(int)gridy;
+        double[][] neighbours = getNearestNeighourLatticeCoordsAndDists(gridx, gridy);
 
-        //TODO interpolate
-        Sample s=lattice.sample(latticeX, latticeY, parameters.getSamplesize());
-
-        return s;
+        List<PointSample> samples=new ArrayList<PointSample>();
+        WeightedSample sample=new WeightedSample();
+        for (int i = 0; i < 3; i++) {
+            int latticex=(int)neighbours[i][0];
+            int latticey=(int)neighbours[i][1];
+            if ((latticey>=0) && (latticey<height)) {
+                PointSample s = lattice.sample(latticex, latticey, parameters.getSamplesize());
+                //weight closer samples higher
+                sample.addSample(s, 1.0 - neighbours[i][2]);
+            }
+        }
+        return sample;
     }
 
     /**
@@ -151,7 +157,7 @@ public class World {
     }
 
     protected double convertLatitudeToGridY(double lat) {
-        return Util.interpolate(0,height,-90,90,lat);
+        return Util.interpolate(0,height,90,-90,lat);
     }
 
 
@@ -222,7 +228,7 @@ public class World {
      * calculate local hour here.
      * @param x
      * @param gmtHour
-     * @return
+     * @return local hour of day
      */
     protected double calculateLocalHour(int x, int gmtHour) {
         if (x== parameters.getGmt_x())
@@ -248,10 +254,13 @@ public class World {
 
         int sourceY = (int) Util.interpolate( 0, elevation.getElevationHeight(),90, -90,lat);
 
+
         //Greenwich is a x 0 on our map, so shift longitude back 180
         int sourceX = (int) Util.interpolate(0, elevation.getElevationWidth(),-180,180, longi+180) %elevation.getElevationWidth();
-        return elevation.getElevation(sourceX,sourceY);
 
+        int elev= elevation.getElevation(sourceX,sourceY);
+//        System.out.println("X:"+sourceX+" Y:"+sourceY + "elev:"+elev);
+        return elev;
         }
 
     /**
@@ -261,20 +270,100 @@ public class World {
     public double[][] generateTemperatureMap() {
         double[][] grid =  new double[360][180];
         for (int longi = -180; longi < 180; longi++) {
-            for (int lat = -90; lat < 90; lat++) {
-//                System.out.println("longi:"+longi+"Lat:"+lat);
-                double gridx=convertLongitudeToGridX(longi);
-                double gridy=convertLatitudeToGridY(lat);
-//                System.out.println("Gridx:"+gridx+" Grid y:"+gridy);
-                int latticeX= (int) convertGridxToLatticex(gridx,gridy);
-//                System.out.println("LatticeX:"+latticeX);
-                int latticeY= (int) gridy;
-                double t=lattice.sample(latticeX, latticeY, 2).getAverageTemp();
+            for (int lat = 90; lat > -90; lat--) {
 
-                grid[longi+180][lat+90]=t;
+
+                grid[longi+180][180-(lat+90)]=getSample(lat,longi).getAverageTemp();
+////                System.out.println("longi:"+longi+"Lat:"+lat);
+//                double gridx=convertLongitudeToGridX(longi);
+//                double gridy=convertLatitudeToGridY(lat);
+////                System.out.println("Gridx:"+gridx+" Grid y:"+gridy);
+//                int latticeX= (int) convertGridxToLatticex(gridx,gridy);
+////                System.out.println("LatticeX:"+latticeX);
+//                int latticeY= (int) gridy;
+//                double t=lattice.sample(latticeX, latticeY, 2).getAverageTemp();
+//
+//                grid[longi+180][lat+90]=t;
 
             }
         }
         return grid;
+    }
+
+
+    /**
+     * Given a grid point, return the lattice coords of the three nearest lattice points, and distances
+     * to those points
+     * @param gridx
+     * @param gridy
+     * @return an array of three arrays, each of which hold x y lattice coords of three
+     * nearest point and distance to those points [3][3]
+     */
+    public double[][] getNearestNeighourLatticeCoordsAndDists(double gridx,double gridy)
+    {
+        double[][] out=new double[3][3];
+        // 1) Find grid points of nearest 4 neighbours on the lattice-
+        // p0 :above back
+        // p1: above forwards
+        // p2: down back
+        // p3: down forwards
+
+        //arrays to hold grid coords of above points
+        double px[]=new double[4];
+        double py[]=new double[4];
+
+        //array to hold lattice x coord of above points
+        double plx[] = new double[4];
+
+        py[0]=Math.round(gridy);
+        plx[0]=Math.round(convertGridxToLatticex(gridx, gridy))%width;
+        px[0]=convertLatticexToGridx(plx[0], py[0]);
+
+        py[1]=py[0];
+        plx[1]=Math.ceil(convertGridxToLatticex(gridx, gridy))%width; //wrap arounde-w;
+        px[1]=convertLatticexToGridx(plx[1],py[1]);
+
+        py[2]=Math.ceil(gridy);
+        plx[2]=Math.round(convertGridxToLatticex(gridx, gridy))%width;
+        px[2]=convertLatticexToGridx(plx[2],py[2]);
+
+
+        py[3]=py[2];
+        plx[3]=Math.ceil(convertGridxToLatticex(gridx, gridy))%width; //wrap around e-w
+        px[3]=convertLatticexToGridx(plx[3],py[3]);
+
+
+
+
+        //find largest distance index- we only want nearest three as the matrix is triangular
+        double maxDist=Double.MIN_VALUE;
+        int indexOfMax=0;
+        double[] dists=new double[4];
+
+
+        //find the longest distance and remember which one it is
+        for (int i = 0; i < 4; i++) {
+//            System.out.println(px[i] + " "+ py[i]);
+            dists[i]=Util.distance(gridx,gridy,px[i],py[i]);
+//            System.out.println(dists[i]);
+            if (dists[i]>maxDist) {
+                maxDist=dists[i];
+                indexOfMax=i;
+            }
+        }
+
+//        return the other three points
+        int targetIndex=0;
+        //build output array
+        for (int i = 0; i < 4; i++) {
+            if (i!=indexOfMax) {
+                out[targetIndex][0]=plx[i];
+                out[targetIndex][1]=py[i];
+                out[targetIndex][2]=dists[i];
+                targetIndex++;
+            }
+        }
+
+        return out;
     }
 }

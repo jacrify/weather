@@ -14,7 +14,7 @@ public class ModelParameters {
     private static final String startTimeString = "2016-01-05T00:45:08Z";
     private static SimpleDateFormat timeFormatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     //size of rectangle to be examined when sampling temp
-     private  int samplesize = 4;
+     private  int samplesize = 3;
     //X COORD OF Greenwich
     private   int gmt_x = 0;
     private int latticeWidth=150;
@@ -28,7 +28,7 @@ public class ModelParameters {
     //in one direction. Array indexes are the directions (see Point)
     private double[] directionBias=new double[] {0.0,0.04,0.08,0.04,0.0,0.0};
     //air density at start
-    private double density=0.01;
+    private double density=0.09;
     //steps to run
     private int steps=200;
 

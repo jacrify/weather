@@ -25,7 +25,7 @@ public class LatticeTest {
         p.addMass(m,0);
         l.setPoint(p);
 
-        Sample s=l.sample(5,5,1);
+        PointSample s=l.sample(5,5,1);
 
         assertEquals(1,s.getPointCount());
         assertEquals(1,s.getMassCount());

@@ -158,7 +158,7 @@ public class Lattice {
     //step out from central cell a number of times, collecting
     //neighbours as we go.
     //For efficiency remember which neighbours we've already checked,
-    private void recursiveSample(Set<Point> newNeighbours, Sample sample,int count) {
+    private void recursiveSample(Set<Point> newNeighbours, PointSample sample,int count) {
         if (count>1) {
             Set<Point> oldNewNeighbours=newNeighbours;
             newNeighbours=new HashSet<Point>();
@@ -180,11 +180,11 @@ public class Lattice {
      * @param x x coord to start sample
      * @param y y coord to start sample
      * @param sampleSize radius of sample. 1 means just 1 point, 2 means 1 point and it's neighbours, etc
-     * @return A au.com.jc.weather.lga.Sample object holding the sampled values
+     * @return A au.com.jc.weather.lga.PointSample object holding the sampled values
      */
-    public Sample sample(int x, int y, int sampleSize) {
+    public PointSample sample(int x, int y, int sampleSize) {
         Set<Point> initial=new HashSet<Point>();
-        Sample sample=new Sample();
+        PointSample sample=new PointSample();
 
         sample.addPoint(lattice[x][y]);
         initial.add(lattice[x][y]);

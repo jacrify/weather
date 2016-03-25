@@ -1,6 +1,7 @@
 package au.com.jc.weather.user;
 
 import au.com.jc.weather.lga.Sample;
+import au.com.jc.weather.model.Elevation;
 import au.com.jc.weather.model.ModelParameters;
 import au.com.jc.weather.model.Station;
 import au.com.jc.weather.model.World;
@@ -52,6 +53,8 @@ public class DataFeedRunner {
 
         ModelParameters p=new ModelParameters();
         World world=new World(p);
+        Elevation e=new Elevation();
+        world.setElevation(e);
         populateStations(world);
 
 
