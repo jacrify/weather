@@ -10,42 +10,26 @@ import java.util.Random;
  * Created by john on 20/03/16.
  */
 public class Point {
-    //Array of current masses moving through this getPoint
-    //Position in array indicates the direction mass is moving
-    //directions are nw, ne, e, se, sw, w in that order
-    //Can have empty slots
-    Mass[] masses = new Mass[6];
-
-    //For performance reasons, just hold the non empty masses, with index NOT signifying direction
-    Mass[] massesPopulated= new Mass[6];
-    int massCount=0;
-
-
-    int x;
-    int y;
-
     private static final int NW = 1;
     private static final int NE = 2;
     private static final int E = 4;
     private static final int SE = 8;
     private static final int SW = 16;
     private static final int W = 32;
-
-    public int getMask() {
-        return mask;
-    }
-
-    private int mask = 0;
-
     private static final int[] result1 = new int[64];
     private static final int[] result2 = new int[64];
-
-    public void setRand(Random rand) {
-        this.rand = rand;
-    }
-
+    //Array of current masses moving through this getPoint
+    //Position in array indicates the direction mass is moving
+    //directions are nw, ne, e, se, sw, w in that order
+    //Can have empty slots
+    Mass[] masses = new Mass[6];
+    //For performance reasons, just hold the non empty masses, with index NOT signifying direction
+    Mass[] massesPopulated= new Mass[6];
+    int massCount=0;
+    int x;
+    int y;
+    private int mask = 0;
     private Random rand = new Random();
-
     static {
 
         for (int i = 0; i < 64; i++) {
@@ -93,13 +77,29 @@ public class Point {
 
     }
 
-
     public Point(int x,int y) {
         super();
         this.x=x;
         this.y=y;
     }
 
+    public Point(Point p) {
+        super();
+        x = p.x;
+        y = p.y;
+        massCount = p.massCount;
+        massesPopulated = p.massesPopulated;
+        rand = p.rand;
+
+    }
+
+    public int getMask() {
+        return mask;
+    }
+
+    public void setRand(Random rand) {
+        this.rand = rand;
+    }
 
     /**
      * Examine neighbours. If neighbours have a mass
@@ -179,11 +179,7 @@ public class Point {
      */
 
     public Point scatter() {
-        Point p = new Point(x,y);
-        //TODO create a Point(Point p) constructor
-        p.massCount=massCount;
-        p.massesPopulated=massesPopulated;
-        p.setRand(rand);
+        Point p = new Point(this);
 
         int r1 = result1[mask];
         if (r1 == mask) {
@@ -243,8 +239,6 @@ public class Point {
             mask = mask + (int)Math.pow(2, (i));
         }
     }
-
-
 
     /**
      * Add delta temp to all masses at this getPoi
