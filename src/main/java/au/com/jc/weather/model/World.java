@@ -45,8 +45,6 @@ public class World {
         this.height=parameters.getLatticeHeight();
         this.parameters=parameters;
 
-        int seed=(int)System.currentTimeMillis();
-
         lattice=new Lattice(width,height);
         seedLattice(parameters.getDensity());
     }
@@ -129,7 +127,6 @@ public class World {
 
         double[][] neighbours = getNearestNeighourLatticeCoordsAndDists(gridx, gridy);
 
-        List<PointSample> samples=new ArrayList<PointSample>();
         WeightedSample sample=new WeightedSample();
         for (int i = 0; i < 3; i++) {
             int latticex=(int)neighbours[i][0];
@@ -141,20 +138,6 @@ public class World {
             }
         }
         return sample;
-    }
-
-    /**
-     * Convert a lat long to a floating point lattice coords.
-     * Lattice lines are offset (skewed) to this is tricky.
-     * @param lat
-     * @param longi
-     * @return array[2] of doubles, {x,y}
-     */
-    private double[] convertLatLongToLatticeCoords(double lat, double longi) {
-        double gridX=convertLongitudeToGridX(longi);
-        double gridY=convertLatitudeToGridY(lat);
-
-       return null;
     }
 
     protected double convertLatitudeToGridY(double lat) {

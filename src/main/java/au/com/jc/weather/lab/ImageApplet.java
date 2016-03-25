@@ -19,7 +19,6 @@ public class ImageApplet extends JApplet
     private final String title;
     private ImageSQPanel imageSQPanel;
     private static int frameNumber = -1;
-    private int delay;
     private Thread animatorThread;
     static boolean frozen = false;
     private Timer timer;
@@ -41,7 +40,7 @@ public class ImageApplet extends JApplet
         int fps = 10;
 
         //How many milliseconds between frames?
-        delay = (fps > 0) ? (1000 / fps) : 100;
+        int delay = (fps > 0) ? (1000 / fps) : 100;
 
         //Set up a timer that calls this object's action handler
         timer = new Timer(delay, this);
@@ -129,7 +128,6 @@ public class ImageApplet extends JApplet
             } catch (ArrayIndexOutOfBoundsException e) {
                 //On rare occasions, this method can be called 
                 //when frameNumber is still -1.  Do nothing.
-                return;
             }
         }
     }

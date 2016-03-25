@@ -33,9 +33,8 @@ public class QueryRunner {
     private double longi;
 
     public static void main(String[] args) {
-
         QueryRunner runner = new QueryRunner();
-        String out;
+
         try {
             runner.parseArgs(args);
             System.out.println(runner.run());
@@ -61,10 +60,6 @@ public class QueryRunner {
         double upperBoundTemp=-1;
         Date lowerBoundTime=null;
         Date upperBoundTime=null;
-        double outTemp;
-        boolean firstSampleGrabbed=false;
-        boolean secondSampleGrabbed=false;
-
 
         for (int i = 0; i < p.getSteps(); i++) {
             world.step();

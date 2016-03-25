@@ -37,7 +37,7 @@ public class ElevationData {
      */
     public void loadElevations() {
 
-        BufferedImage image = null;
+        BufferedImage image;
         try {
             image = ImageIO.read(this.getClass().getClassLoader().getResourceAsStream(ELEVATION_IMAGE));
         } catch (IOException e) {

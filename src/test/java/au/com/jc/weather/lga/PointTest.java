@@ -90,7 +90,7 @@ public class PointTest {
         se.masses = new Mass[]{null, null, null, null, null, null};
 
         Point sw = new Point(0,0);
-        Mass neMass = new Mass();
+
         sw.masses = new Mass[]{null, null, null, null, null, null};
 
         Point w = new Point(0,0);
