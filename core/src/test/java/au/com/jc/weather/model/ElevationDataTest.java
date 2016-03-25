@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class ElevationTest {
+public class ElevationDataTest {
     @Test
     public void testLoadElevations() throws Exception {
         ModelParameters p=new ModelParameters();
@@ -14,8 +14,8 @@ public class ElevationTest {
 
         World g=new World(p);
 
-        Elevation e=new Elevation();
-        g.setElevation(e);
+        ElevationData e=new ElevationData();
+        g.setElevationData(e);
 
 
         e.loadElevations();

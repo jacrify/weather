@@ -3,6 +3,7 @@ package au.com.jc.weather.lab;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -38,6 +39,10 @@ public class ImageHelper {
                     }
                 }
             }
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+
+        ImageIO.createImageOutputStream(baos);
+
             ImageIO.write(im, "BMP", new File(filename));
         }
 
@@ -97,5 +102,26 @@ public class ImageHelper {
         this.width=width;
         this.height=height;
         ImageIO.write(im, "BMP", new File(filename));
+    }
+
+    public BufferedImage getColourBitmap(double[][] bytes, double low, double high) throws IOException {
+        int height=bytes[0].length;
+        int width=bytes.length;
+//        System.out.println(""+height);
+        BufferedImage im = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+        WritableRaster raster = im.getRaster();
+        int[] black=new int[]{0,0,0,0};
+        for (int x = 0; x < width; x++) {
+
+            for (int y = 0; y < height; y++) {
+
+                double t=bytes[x][y];
+                if (t==0)
+                    raster.setPixel(x,y,black);
+                else
+                    raster.setPixel(x,y, rgb(low,high, t));
+            }
+        }
+        return im;
     }
 }

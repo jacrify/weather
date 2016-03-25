@@ -4,7 +4,6 @@ package au.com.jc.weather.model;
  * Created by john on 21/03/16.
  */
 public class Util {
-    //
 
     /**
      * Generate a triangle wave of amp with period, solve for x, offset by x and y offsets

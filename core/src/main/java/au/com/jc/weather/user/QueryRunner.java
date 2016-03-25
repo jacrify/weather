@@ -1,6 +1,6 @@
 package au.com.jc.weather.user;
 
-import au.com.jc.weather.model.Elevation;
+import au.com.jc.weather.model.ElevationData;
 import au.com.jc.weather.model.ModelParameters;
 import au.com.jc.weather.model.Util;
 import au.com.jc.weather.model.World;
@@ -51,8 +51,8 @@ public class QueryRunner {
     protected String run() throws IllegalArgumentException {
         ModelParameters p=new ModelParameters();
         World world=new World(p);
-        Elevation e=new Elevation();
-        world.setElevation(e);
+        ElevationData e=new ElevationData();
+        world.setElevationData(e);
 
         if (world.getCurrentTime().getTime() >= targetTime.getTime()) {
             throw new IllegalArgumentException("Passed time "+timeFormatter.format(targetTime)+ " must be greater than simulation start time "+timeFormatter.format(world.getCurrentTime()));
@@ -129,7 +129,7 @@ public class QueryRunner {
         System.out.println("Expected args, space separated,  are:");
         System.out.println("Latitude : eg -29.89");
         System.out.println("Longitude : eg -131.66");
-        System.out.println("Elevation : eg 180");
+        System.out.println("ElevationData : eg 180");
         System.out.println("Time : eg 2016-01-05T00:45:08Z");
         System.out.println("Predicted Temp : eg 28.5");
 

@@ -10,7 +10,7 @@ import java.io.IOException;
  *
  * Created by john on 23/03/16.
  */
-public class Elevation {
+public class ElevationData {
     //TODO move to central model?
     private static final int HEIGHT_OF_EVEREST = 8848;
 //    private static final String ELEVATION_IMAGE = "gebco_08_rev_elev_21600x10800.png";
@@ -24,7 +24,7 @@ public class Elevation {
     /**
      * Create class.
      */
-    public Elevation() {
+    public ElevationData() {
         super();
         loadElevations();
     }

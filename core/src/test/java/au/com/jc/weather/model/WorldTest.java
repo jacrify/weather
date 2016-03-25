@@ -229,5 +229,43 @@ public class WorldTest {
 
 
     }
+    @Test
+    public void testConvertGridXToLongitude() throws Exception {
+        ModelParameters p = new ModelParameters();
+        p.setLatticeWidth(3);
+        p.setLatticeHeight(3);
 
+        p.setDensity(0);
+        World g = new World(p);
+        double n;
+
+        n = g.convertGridXToLongitude(0, 360);
+        assertEquals(0, n, 0.01);
+
+        n = g.convertGridXToLongitude(180, 360);
+        assertEquals(180, n, 0.01);
+
+        n = g.convertGridXToLongitude(190, 360);
+        assertEquals(-170, n, 0.01);
+    }
+
+    @Test
+    public void testConvertGridYToLatitude() throws Exception {
+        ModelParameters p = new ModelParameters();
+        p.setLatticeWidth(3);
+        p.setLatticeHeight(3);
+
+        p.setDensity(0);
+        World g = new World(p);
+        double n;
+
+        n = g.convertGridYToLatitude(0, 180);
+        assertEquals(90, n, 0.01);
+
+        n = g.convertGridYToLatitude(90,180);
+        assertEquals(0, n, 0.01);
+
+        n = g.convertGridYToLatitude(180, 180);
+        assertEquals(-90, n, 0.01);
+    }
 }

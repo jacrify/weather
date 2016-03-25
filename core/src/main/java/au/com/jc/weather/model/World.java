@@ -3,6 +3,7 @@ package au.com.jc.weather.model;
 import au.com.jc.weather.lga.*;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Model of the world.
@@ -24,15 +25,15 @@ public class World {
     private final ModelParameters parameters;
     private int hourOfDayAtGMT=0;
 
-    public Elevation getElevation() {
-        return elevation;
+    public ElevationData getElevationData() {
+        return elevationData;
     }
 
-    public void setElevation(Elevation elevation) {
-        this.elevation = elevation;
+    public void setElevationData(ElevationData elevationData) {
+        this.elevationData = elevationData;
     }
 
-    private Elevation elevation;
+    private ElevationData elevationData;
 
     private Lattice lattice;
 
@@ -157,14 +158,33 @@ public class World {
     }
 
     protected double convertLatitudeToGridY(double lat) {
-        return Util.interpolate(0,height,90,-90,lat);
+        return convertLatitudeToGridY(lat,height);
     }
+
+    protected double convertLatitudeToGridY(double lat, int gridHeight) {
+        return Util.interpolate(0,gridHeight,90,-90,lat);
+    }
+
 
 
     protected double convertLongitudeToGridX(double longi) {
-        return Util.interpolate(0, width, -180, 180, longi + 180) % width;
+        return convertLongitudeToGridX(longi,width);
     }
 
+    protected double convertLongitudeToGridX(double longi,int gridWidth) {
+        return Util.interpolate(0, gridWidth, -180, 180, longi + 180) % gridWidth;
+    }
+
+    protected double convertGridXToLongitude(double gridX,int gridWidth) {
+        double longi= Util.interpolate(0,360,0,gridWidth,gridX);
+        if (longi>180)
+            longi-=360;
+        return longi;
+    }
+
+    protected double convertGridYToLatitude(double gridY,int gridHeight) {
+       return Util.interpolate(90,-90,0,gridHeight,gridY);
+    }
     /**
      * Convert lattice coords (sked) into rectangular grid coords
      * @param latticex
@@ -174,6 +194,8 @@ public class World {
     protected double convertLatticexToGridx(double latticex, double latticey) {
         return (latticex+(latticey/2.0)) %width;
     }
+
+
 
     protected double  convertGridxToLatticex (double gridx,double gridy) {
         double x= (gridx - (gridy/2.0)) ;
@@ -252,39 +274,26 @@ public class World {
 
     public int getElevation(double lat, double longi) {
 
-        int sourceY = (int) Util.interpolate( 0, elevation.getElevationHeight(),90, -90,lat);
+        int sourceY = (int) Util.interpolate( 0, elevationData.getElevationHeight(),90, -90,lat);
 
 
         //Greenwich is a x 0 on our map, so shift longitude back 180
-        int sourceX = (int) Util.interpolate(0, elevation.getElevationWidth(),-180,180, longi+180) %elevation.getElevationWidth();
+        int sourceX = (int) Util.interpolate(0, elevationData.getElevationWidth(),-180,180, longi+180) % elevationData.getElevationWidth();
 
-        int elev= elevation.getElevation(sourceX,sourceY);
+        int elev= elevationData.getElevation(sourceX,sourceY);
 //        System.out.println("X:"+sourceX+" Y:"+sourceY + "elev:"+elev);
         return elev;
         }
 
-    /**
-     * Debug method for generate images.
-     * @return
-     */
-    public double[][] generateTemperatureMap() {
-        double[][] grid =  new double[360][180];
-        for (int longi = -180; longi < 180; longi++) {
-            for (int lat = 90; lat > -90; lat--) {
 
 
-                grid[longi+180][180-(lat+90)]=getSample(lat,longi).getAverageTemp();
-////                System.out.println("longi:"+longi+"Lat:"+lat);
-//                double gridx=convertLongitudeToGridX(longi);
-//                double gridy=convertLatitudeToGridY(lat);
-////                System.out.println("Gridx:"+gridx+" Grid y:"+gridy);
-//                int latticeX= (int) convertGridxToLatticex(gridx,gridy);
-////                System.out.println("LatticeX:"+latticeX);
-//                int latticeY= (int) gridy;
-//                double t=lattice.sample(latticeX, latticeY, 2).getAverageTemp();
-//
-//                grid[longi+180][lat+90]=t;
-
+    public double[][] generateMap(int mapWidth,int mapHeight, Function<Sample,Double> function) {
+        double[][] grid =  new double[mapWidth][mapHeight];
+        for (int x = 0; x < mapWidth; x++) {
+            for (int y = 0; y < mapHeight; y++) {
+                double lat=convertGridYToLatitude(y,mapHeight);
+                double longi=convertGridXToLongitude(x,mapWidth);
+                grid[x][y]=function.apply(getSample(lat,longi));
             }
         }
         return grid;
