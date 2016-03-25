@@ -25,7 +25,7 @@ public class DataFeedRunner {
 
     private static NumberFormat latFormatter=new DecimalFormat("#0.00");
     private static NumberFormat elevationFormatter=new DecimalFormat("##0");
-    private static NumberFormat longFormatter=new DecimalFormat("#####0");
+    private static NumberFormat longFormatter=new DecimalFormat("##0.00");
     private static NumberFormat pressureFormatter=new DecimalFormat("###0.0");
     private static NumberFormat tempFormatter=new DecimalFormat("+###0.00;-###0.00");
     private static NumberFormat humidityFormatter=new DecimalFormat("#0");
