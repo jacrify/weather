@@ -10,28 +10,40 @@ import java.util.Random;
  * Created by john on 23/03/16.
  */
 public class ModelParameters {
+    private static SimpleDateFormat timeFormatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
     //when to start our model
     private static final String startTimeString = "2016-01-05T00:45:08Z";
-    private static SimpleDateFormat timeFormatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private Date startTime;
+
     //size of rectangle to be examined when sampling temp
      private  int samplesize = 3;
+
     //X COORD OF Greenwich
     private   int gmt_x = 0;
+
+    //size of the air lattice
     private int latticeWidth=150;
-    //base change in temp per hour, in degrees
-    private  double lat_temp_delta = 0.2;
     private int latticeHeight=150;
+
+
+    //change in air temp per hour at midday
     private   double time_temp_delta = 2.0;
-    private Date startTime;
+
+    //extra change in air temp at equator
+    private  double lat_temp_delta = 0.2;
+
 
     //When seeding the lattice, this array is used to "bias" particle motion
     //in one direction. Array indexes are the directions (see Point)
     private double[] directionBias=new double[] {0.0,0.04,0.08,0.04,0.0,0.0};
+
     //air density at start
+    //this is the change that any given mass slot will be populated
     private double density=0.09;
+
     //steps to run
     private int steps=200;
-
 
     //use same RNR for all runs to ensure consistency.
     private Random rand;
