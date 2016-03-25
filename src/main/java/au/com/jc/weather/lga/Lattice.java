@@ -37,15 +37,10 @@ public class Lattice {
         Point[][] templattice = new Point[width][height];
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                //work out neighbours. Wrap at edges
-                //TODO poles should not wrap to each other,
-                //but should either reflect or send particles
-                //"over the top" to opposite longitude
+                //Get array of  neighbours.
                 Point[] neighbours = getNeighbours(x, y);
-
                 templattice[x][y] = lattice[x][y].flight(neighbours);
             }
-
         }
 
         //scatter
